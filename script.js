@@ -103,6 +103,7 @@
         {
             var curNote = document.createElement('li');
             var noteTextBox = note.textBox;
+            noteTextBox.setAttribute('class', 'noteTextBox');
             noteTextBox.setAttribute('type', 'text');
             noteTextBox.setAttribute.disabled = true;
             noteTextBox.value = note.msg;

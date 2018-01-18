@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Indie+Flower');
-
+@import url('https://fonts.googleapis.com/css?family=Architects+Daughter');
 body{
     background-image:url('texture.jpg');
     text-align: center;
@@ -16,4 +16,11 @@ button
 {
     background-image: url('woodTexture.jpeg');
     color: white;
+}
+
+.noteTextBox
+{
+    font-family: 'Architects Daughter', cursive;
+    font-weight: 600;
+
 }
