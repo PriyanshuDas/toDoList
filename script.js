@@ -11,6 +11,10 @@
             this.editButton = document.createElement('button');
             this.addButton = document.createElement('button');
             this.saveButton = document.createElement('button');
+            this.doneButton = document.createElement('button');
+            this.notDoneButton = document.createElement('button');
+            this.notDoneButton.innerHTML = 'Undo';
+            this.doneButton.innerHTML = 'Done';
             this.saveButton.innerHTML = 'Save';
             this.textBox = document.createElement('input');
             this.textBox.setAttribute('type', 'text');
@@ -27,16 +31,21 @@
 
             this.toggleActive = function()
             {
-                this.active = !(this.active);
-                for (var i = 0; i < this.subNotes.size(); i++)
-                    this.subNotes[i].toggleActive();
-
+                parent.active = !(parent.active);
+                console.log('Toggle to : ', parent.active);
+                for (var i = 0; i < parent.subNotes.length; i++)
+                    parent.subNotes[i].toggleActive();
+                if(parent.active)
+                {
+                    parent.notDoneButton.style.display='none';
+                    parent.doneButton.style.display='inline';
+                }
+                else
+                {
+                    parent.notDoneButton.style.display='inline';
+                    parent.doneButton.style.display='none';
+                }
                 render();
-            }
-
-            this.toggleActive = function()
-            {
-                this.active = !this.active();
             }
 
             this.addSubNote = function(msg)
@@ -82,7 +91,10 @@
             this.editButton.addEventListener('click', this.editNote);
             this.addButton.addEventListener('click', function() {return parent.addSubNote('subnote')});
             this.saveButton.addEventListener('click', parent.saveText);
+            this.doneButton.addEventListener('click', parent.toggleActive);
+            this.notDoneButton.addEventListener('click', parent.toggleActive);
             parent.saveButton.style.display = 'none';
+            parent.notDoneButton.style.display = 'none';
             //render();
         }
 
@@ -94,11 +106,18 @@
             noteTextBox.setAttribute('type', 'text');
             noteTextBox.setAttribute.disabled = true;
             noteTextBox.value = note.msg;
+            console.log('Note is active: ', note.active);
+            if(!note.active)
+                noteTextBox.style.textDecoration = 'line-through';
+            else
+                noteTextBox.style.textDecoration = 'none';
             curNote.appendChild(noteTextBox);
             curNote.appendChild(note.deleteButton);
             curNote.appendChild(note.editButton);
             curNote.appendChild(note.saveButton);
             curNote.appendChild(note.addButton);
+            curNote.appendChild(note.doneButton);
+            curNote.appendChild(note.notDoneButton);
             if(note.subNotes.length > 0)
             {
                 var newNote = document.createElement('ol');
