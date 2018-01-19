@@ -19,6 +19,7 @@
                 parent.doneButton.style.display='none';
             }
             render();
+            setToLocal();
         }
         var undoNote = function(parent)
         {
@@ -29,6 +30,7 @@
             parent.notDoneButton.style.display='none';
             parent.doneButton.style.display='inline';
             render();
+            setToLocal();
         }
         var addSubNote = function(parent, msg)
         {
@@ -45,6 +47,7 @@
             parent.isdeleted = true;
             updateList();
             render();
+            setToLocal();
         }
 
         var editNote = function(parent)
@@ -66,7 +69,8 @@
             parent.textBox.disabled = true;
             parent.editButton.style.display = 'inline';
             parent.saveButton.style.display = 'none';
-            render();
+            render()
+            setToLocal();
         }
 
         var initializeNote = function(parent, message, idx)
@@ -152,7 +156,6 @@
                 notes.appendChild(renderList);
             }
             console.log(List);
-            setToLocal();
         }
 
         function addNote(msg)
@@ -160,6 +163,7 @@
             var newNote = new Note(msg, List.length);
             List.push(newNote);
             render();
+setToLocal();
         }
 
         function recheckNotes(Note)
