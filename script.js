@@ -1,104 +1,118 @@
 (
     function() {
         var notes = document.getElementsByClassName("notes")[0];
-        var Note = function (message, idx) {
-            this.index = idx;
-            this.msg = message;
-            this.active = true;
-            this.subNotes = new Array();
-            this.isdeleted = false;
-            this.deleteButton = document.createElement('button');
-            this.editButton = document.createElement('button');
-            this.addButton = document.createElement('button');
-            this.saveButton = document.createElement('button');
-            this.doneButton = document.createElement('button');
-            this.notDoneButton = document.createElement('button');
-            this.notDoneButton.innerHTML = 'Undo';
-            this.doneButton.innerHTML = 'Done';
-            this.saveButton.innerHTML = 'Save';
-            this.textBox = document.createElement('input');
-            this.textBox.setAttribute('type', 'text');
-            this.textBox.disabled = true;
-            this.addButton.innerHTML = '+';
-            this.deleteButton.innerHTML = 'X';
-            this.editButton.innerHTML = 'Edit';
-            this.saveButton.disabled = true;
-            var parent = this;
-            this.setNote = function (msg) {
-                this.msg = msg;
-                render();
-            }
 
-            this.toggleActive = function()
+        var doNote = function(parent)
+        {
+            parent.active = false;
+            console.log('Toggle to : ', parent.active);
+            for (var i = 0; i < parent.subNotes.length; i++)
+                doNote(parent.subNotes[i]);
+            if(parent.active)
             {
-                parent.active = !(parent.active);
-                console.log('Toggle to : ', parent.active);
-                for (var i = 0; i < parent.subNotes.length; i++)
-                    parent.subNotes[i].toggleActive();
-                if(parent.active)
-                {
-                    parent.notDoneButton.style.display='none';
-                    parent.doneButton.style.display='inline';
-                }
-                else
-                {
-                    parent.notDoneButton.style.display='inline';
-                    parent.doneButton.style.display='none';
-                }
-                render();
+                parent.notDoneButton.style.display='none';
+                parent.doneButton.style.display='inline';
             }
-
-            this.addSubNote = function(msg)
+            else
             {
-                console.log('Adding '+msg+' to '+ parent.msg);
-               var childNote = new Note(msg, parent.subNotes.length);
-               parent.subNotes.push(childNote);
-               console.log(parent.subNotes);
-               render();
+                parent.notDoneButton.style.display='inline';
+                parent.doneButton.style.display='none';
             }
+            render();
+        }
+        var undoNote = function(parent)
+        {
+            parent.active = true;
+            console.log('Toggle to : ', parent.active);
+            for (var i = 0; i < parent.subNotes.length; i++)
+                undoNote(parent.subNotes[i]);
+            parent.notDoneButton.style.display='none';
+            parent.doneButton.style.display='inline';
+            render();
+        }
+        var addSubNote = function(parent, msg)
+        {
+            console.log('Adding '+msg+' to '+ parent.msg);
+            var childNote = new Note(msg, parent.subNotes.length);
+            parent.subNotes.push(childNote);
+            console.log(parent.subNotes);
+            render();
+        }
 
-            this.deleteNote = function ()
-            {
-                console.log('Deleting ' + parent);
-                parent.isdeleted = true;
-                updateList();
-                render();
-            }
+        var deleteNote = function (parent)
+        {
+            console.log('Deleting ' + parent);
+            parent.isdeleted = true;
+            updateList();
+            render();
+        }
 
-            this.editNote = function()
-            {
-                parent.textBox.disabled = false;
-                console.log('Editing ' + parent);
-                parent.editButton.disabled = true;
-                parent.saveButton.disabled = false;
-                parent.saveButton.style.display = 'inline';
-                parent.editButton.style.display = 'none';
-            }
+        var editNote = function(parent)
+        {
+            parent.textBox.disabled = false;
+            console.log('Editing ' + parent);
+            parent.editButton.disabled = true;
+            parent.saveButton.disabled = false;
+            parent.saveButton.style.display = 'inline';
+            parent.editButton.style.display = 'none';
+        }
 
-            this.saveText =function()
-            {
-                parent.msg = parent.textBox.value;
-                parent.editButton.disabled = false;
-                parent.editButton.style.visibility = '';
-                parent.saveButton.disabled = true;
-                parent.textBox.disabled = true;
-                parent.editButton.style.display = 'inline';
-                parent.saveButton.style.display = 'none';
-                render();
-            }
+        var saveText =function(parent)
+        {
+            parent.msg = parent.textBox.value;
+            parent.editButton.disabled = false;
+            parent.editButton.style.visibility = '';
+            parent.saveButton.disabled = true;
+            parent.textBox.disabled = true;
+            parent.editButton.style.display = 'inline';
+            parent.saveButton.style.display = 'none';
+            render();
+        }
 
-            this.deleteButton.addEventListener('click', this.deleteNote);
-            this.editButton.addEventListener('click', this.editNote);
-            this.addButton.addEventListener('click', function() {return parent.addSubNote('subnote')});
-            this.saveButton.addEventListener('click', parent.saveText);
-            this.doneButton.addEventListener('click', parent.toggleActive);
-            this.notDoneButton.addEventListener('click', parent.toggleActive);
+        var initializeNote = function(parent, message, idx)
+        {
+            parent.idx = idx;
+            parent.msg = message;
+            parent.active = true;
+            parent.subNotes = new Array();
+            parent.isdeleted = false;
+            parent.deleteButton = document.createElement('button');
+            parent.editButton = document.createElement('button');
+            parent.addButton = document.createElement('button');
+            parent.saveButton = document.createElement('button');
+            parent.doneButton = document.createElement('button');
+            parent.notDoneButton = document.createElement('button');
+            parent.notDoneButton.innerHTML = 'Undo';
+            parent.doneButton.innerHTML = 'Done';
+            parent.saveButton.innerHTML = 'Save';
+            parent.textBox = document.createElement('input');
+            parent.textBox.setAttribute('type', 'text');
+            parent.textBox.disabled = true;
+            parent.addButton.innerHTML = '+';
+            parent.deleteButton.innerHTML = 'X';
+            parent.editButton.innerHTML = 'Edit';
+            parent.saveButton.disabled = true;
+            parent.addButton.style.display = 'inline';
             parent.saveButton.style.display = 'none';
             parent.notDoneButton.style.display = 'none';
-            //render();
+
+            parent.deleteButton.addEventListener('click', function() {return deleteNote(parent)});
+            parent.editButton.addEventListener('click', function() {editNote(parent)});
+            parent.addButton.addEventListener('click', function() {return addSubNote(parent, 'subnote')});
+            parent.saveButton.addEventListener('click', function() {return saveText(parent)});
+            parent.doneButton.addEventListener('click', function () {return doNote(parent)});
+            parent.notDoneButton.addEventListener('click', function () {return undoNote(parent)});
+
+        }
+        var Note = function (message, idx) {
+
+            var parent = this;
+            initializeNote(parent, message, idx);
         }
 
         var List = new Array();
+        //List.push(new Note('123', 1));
+        //getFromLocal();
         function renderNote(note)
         {
             var curNote = document.createElement('li');
@@ -116,9 +130,9 @@
             curNote.appendChild(note.deleteButton);
             curNote.appendChild(note.editButton);
             curNote.appendChild(note.saveButton);
-            curNote.appendChild(note.addButton);
             curNote.appendChild(note.doneButton);
             curNote.appendChild(note.notDoneButton);
+            curNote.appendChild(note.addButton);
             if(note.subNotes.length > 0)
             {
                 var newNote = document.createElement('ol');
@@ -137,6 +151,8 @@
                 var renderList = renderNote(List[i]);
                 notes.appendChild(renderList);
             }
+            console.log(List);
+            setToLocal();
         }
 
         function addNote(msg)
@@ -175,9 +191,76 @@
                 }
             }
         }
+
+
+        function setTraverseNote(note)
+        {
+            var curNote = {};
+            curNote.idx = note.idx;
+            curNote.msg = note.msg;
+            curNote.active = note.active;
+            curNote.isdeleted = note.isdeleted;
+            curNote.subNotes = new Array();
+            for(var i = 0; i < note.subNotes.length; i++)
+            {
+                curNote.subNotes.push(setTraverseNote(note.subNotes[i]));
+            }
+            return curNote;
+        }
+
+        function getTraverseNote(notestate)
+        {
+            var note = new Note(notestate.msg, notestate.idx);
+            if(notestate.isdeleted)
+            {
+                deleteNote(note.parent);
+            }
+
+            if(notestate.active)
+            {
+                note.doneButton.style.display = 'inline';
+                note.notDoneButton.style.display = 'none';
+            }
+            else
+            {
+                note.doneButton.style.display = 'none';
+                note.notDoneButton.style.display = 'inline';
+            }
+
+            for(var i = 0; i < notestate.subNotes.length; i++)
+            {
+                var newNote = getTraverseNote(notestate.subNotes[i]);
+                note.subNotes.push(newNote);
+            }
+            return note;
+        }
+        function setToLocal()
+        {
+            var textList = new Array();
+            for(var i = 0; i < List.length; i++)
+            {
+                textList.push(setTraverseNote(List[i]));
+            }
+            console.log(textList);
+            localStorage.setItem('textList', JSON.stringify(List));
+        }
+
+        function getFromLocal() {
+            var List2 = JSON.parse(localStorage.getItem('textList'));
+            console.log(List2);
+            List = new Array();
+            for (var i = 0; i < List2.length; i++) {
+                var curNote = getTraverseNote(List2[i]);
+                List.push(curNote);
+            }
+            console.log(List);
+        }
         var addNoteButton = document.getElementsByClassName('addnote')[0];
         var newnote = document.getElementsByClassName('newnote')[0];
         addNoteButton.addEventListener('click', function() {return addNote(newnote.value)});
+        //localStorage.removeItem('List');
+        getFromLocal();
+        render();
     }
 )();
 

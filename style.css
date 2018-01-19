@@ -18,9 +18,9 @@ button
     color: white;
 }
 
-.noteTextBox
+.noteTextBox, .newnote
 {
     font-family: 'Architects Daughter', cursive;
     font-weight: 600;
-
+    width: 40%;
 }
